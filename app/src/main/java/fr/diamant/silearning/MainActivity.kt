@@ -1,4 +1,4 @@
-@file:OptIn(ExperimentalMaterial3Api::class)
+@file:OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3Api::class)
 
 package fr.diamant.silearning
 
@@ -16,8 +16,10 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
@@ -41,11 +43,13 @@ class MainActivity : ComponentActivity() {
 @Composable
 fun MainScreen() {
     val navController = rememberNavController()
+    val snackbarHostState = remember { SnackbarHostState() }
 
     Scaffold(topBar = { TopBar() },
-        bottomBar = { BottomBar(navController) }
+        bottomBar = { BottomBar(navController) },
+        snackbarHost = { snackbarHostState }
     ) { innerPadding ->
-        NavigationGraph(navController, Modifier.padding(innerPadding))
+        NavigationGraph(navController, innerPadding, snackbarHostState, Modifier.padding(innerPadding))
     }
 }
 
@@ -64,15 +68,18 @@ fun BottomBar(navController: NavController) {
         NavigationDestinations.Settings
     )
 
-    NavigationBar {
-        items.forEach { destination ->
-            NavigationBarItem(
-                selected = navController.currentBackStackEntry?.destination?.hierarchy?.any { it.route == destination.route } == true,
-                onClick = { navController.navigate(destination.route) },
-                label = { Text(text = destination.route.replaceFirstChar { it.uppercase() }) },
-                icon = { Icon(Icons.Default.Home, contentDescription = destination.route) }
-            )
-        }
+    SetNavigationBar(navController, items)
+}
+
+@Composable
+fun SetNavigationBar(navController: NavController, items: List<NavigationDestinations>) = NavigationBar {
+    items.forEach { destination ->
+        NavigationBarItem(
+            selected = navController.currentBackStackEntry?.destination?.hierarchy?.any { it.route == destination.route } == true,
+            onClick = { navController.navigate(destination.route) },
+            label = { Text(text = destination.route.replaceFirstChar { it.uppercase() }) },
+            icon = { Icon(Icons.Default.Home, contentDescription = destination.route) }
+        )
     }
 }
 
