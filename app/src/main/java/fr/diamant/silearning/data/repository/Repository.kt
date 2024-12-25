@@ -8,7 +8,8 @@ interface Repository {
     fun getAllCategories(): Flow<List<Category>>
     fun getCategoryById(id: Int): Flow<Category>
     fun getCategoryByName(name: String): Flow<Category>
-    fun getQuestionsByCategory(categoryId: Int): Flow<List<Question>>
+    fun getQuestionsByCategoryId(categoryId: Int): Flow<List<Question>>
+    fun getQuestionsByCategoryName(categoryName: String): Flow<List<Question>>
     fun getAllQuestions(): Flow<List<Question>>
     fun getQuestionById(id: Int): Flow<Question>
 

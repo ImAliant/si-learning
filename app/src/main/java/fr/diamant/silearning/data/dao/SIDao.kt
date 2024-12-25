@@ -29,7 +29,10 @@ interface SIDao {
     fun getCategoryIdByName(name: String): Long?
 
     @Query("SELECT * FROM questions WHERE categoryId = :categoryId")
-    fun getQuestionsByCategory(categoryId: Int): Flow<List<Question>>
+    fun getQuestionsByCategoryId(categoryId: Int): Flow<List<Question>>
+
+    @Query("SELECT * FROM questions WHERE categoryId = (SELECT id FROM categories WHERE name = :categoryName LIMIT 1)")
+    fun getQuestionsByCategoryName(categoryName: String): Flow<List<Question>>
 
     @Query("SELECT * FROM questions WHERE id = :id")
     fun getQuestionById(id: Int): Flow<Question>
