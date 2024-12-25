@@ -1,9 +1,11 @@
 package fr.diamant.silearning
 
+import android.content.Context
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -27,6 +29,6 @@ fun NavigationGraph(navController: NavHostController, padding: PaddingValues, sn
 }
 
 sealed class NavigationDestinations(val route: String) {
-    data object Home : NavigationDestinations("home")
-    data object Settings : NavigationDestinations("settings")
+    data object Home : NavigationDestinations("accueil")
+    data object Settings : NavigationDestinations("paramètres")
 }

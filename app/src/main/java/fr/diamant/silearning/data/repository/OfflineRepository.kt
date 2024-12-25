@@ -3,7 +3,6 @@ package fr.diamant.silearning.data.repository
 import fr.diamant.silearning.data.dao.SIDao
 import fr.diamant.silearning.data.entity.Category
 import fr.diamant.silearning.data.entity.Question
-import kotlinx.coroutines.flow.Flow
 
 class OfflineRepository(private val dao: SIDao): Repository {
     override fun getAllCategories() = dao.getAllCategories()
