@@ -1,4 +1,5 @@
 <resources>
     <string name="app_name">SILearning</string>
     <string name="play">Jouer</string>
+    <string name="no_category_selected">Aucune catégorie sélectionnée</string>
 </resources>

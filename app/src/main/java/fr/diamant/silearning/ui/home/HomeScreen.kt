@@ -12,8 +12,10 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.colorResource
@@ -22,16 +24,28 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Category
+import fr.diamant.silearning.error.ErrorHandler
 import fr.diamant.silearning.viewmodel.home.HomeViewModel
 
 @Composable
-fun HomeScreen(navController: NavController, paddingValues: PaddingValues, model: HomeViewModel = viewModel()) {
+fun HomeScreen(
+    navController: NavController,
+    paddingValues: PaddingValues,
+    snackbarHostState: SnackbarHostState,
+    model: HomeViewModel = viewModel()
+) {
+    val selected by model.selectedCategories
+
+    val error by model.error
+
+    ErrorHandler(error, snackbarHostState)
+
     Column {
         ShowCategories(model)
 
         Button(
-            enabled = true, // TODO : Add logic to enable/disable button
-            onClick = playSelected(navController)
+            enabled = selected != null,
+            onClick = { model.playSelected(navController) }
         ) {
             Text(text = LocalContext.current.getString(R.string.play))
         }
@@ -60,7 +74,7 @@ private fun ListCategory(index: Int, category: Category, model: HomeViewModel) {
         else -> colorResource(id = R.color.purple_500)
     }
 
-    Card( // TODO: Add logic for card click
+    Card(
         onClick = { model.updateSelection(category) },
         modifier = Modifier.fillMaxHeight(),
         colors = CardDefaults.cardColors(containerColor)
@@ -72,8 +86,4 @@ private fun ListCategory(index: Int, category: Category, model: HomeViewModel) {
             Text(text = category.name, modifier = Modifier.padding(2.dp))
         }
     }
-}
-
-private fun playSelected(navController: NavController): () -> Unit = {
-    navController.navigate("play")
 }

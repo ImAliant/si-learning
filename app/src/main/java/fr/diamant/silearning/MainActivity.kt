@@ -26,6 +26,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.NavController
 import androidx.navigation.NavDestination.Companion.hierarchy
 import androidx.navigation.compose.rememberNavController
+import fr.diamant.silearning.navigation.NavigationDestinations
+import fr.diamant.silearning.navigation.NavigationGraph
 import fr.diamant.silearning.ui.theme.SILearningTheme
 
 class MainActivity : ComponentActivity() {
