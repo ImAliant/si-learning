@@ -66,4 +66,7 @@ dependencies {
 
     // ksp
     ksp(libs.room.compiler)
+
+    // gson
+    implementation(libs.gson)
 }
