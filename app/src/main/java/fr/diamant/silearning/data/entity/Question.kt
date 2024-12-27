@@ -24,4 +24,8 @@ data class Question(
     val question: String,
     val answer: String,
     val categoryId: Int
-)
+) {
+    override fun toString(): String {
+        return "Question(id=$id, question='$question', answer='$answer', categoryId=$categoryId)"
+    }
+}

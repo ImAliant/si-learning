@@ -15,6 +15,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -25,6 +26,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
+import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.error.ErrorHandler
 import fr.diamant.silearning.viewmodel.game.GameViewModel
 
@@ -36,12 +38,14 @@ fun GameScreen(
     categoryId: Int,
     model: GameViewModel = viewModel()
 ) {
-    val current = model.currentQuestion?.question
+    val current by remember { model.currentQuestion }
     val userAnswer by remember { model.userAnswer }
     val context = LocalContext.current
-    val error by model.error
+    val error by remember { model.error }
 
-    model.initializeGame(categoryId)
+    LaunchedEffect(categoryId) {
+        model.initializeGame(categoryId)
+    }
 
     ErrorHandler(error, snackbarHostState)
 
@@ -59,7 +63,7 @@ fun GameScreen(
 private fun GameUI(
     navController: NavController,
     paddingValues: PaddingValues,
-    current: String?,
+    current: Question?,
     userAnswer: String,
     context: Context,
     model: GameViewModel
@@ -73,7 +77,7 @@ private fun GameUI(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        QuestionText(question = current, context = context)
+        QuestionText(question = current?.question, context = context)
 
         AnswerInput(
             userAnswer = userAnswer,
