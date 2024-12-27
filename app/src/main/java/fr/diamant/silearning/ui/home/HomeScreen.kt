@@ -16,6 +16,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -25,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Category
-import fr.diamant.silearning.error.ErrorHandler
+import fr.diamant.silearning.error.SnackbarHandler
 import fr.diamant.silearning.viewmodel.home.HomeViewModel
 
 @Composable
@@ -35,11 +36,10 @@ fun HomeScreen(
     snackbarHostState: SnackbarHostState,
     model: HomeViewModel = viewModel()
 ) {
-    val selected by model.selectedCategories
+    val selected by remember { model.selectedCategories }
+    val snackbarMessage by remember { model.snackbarMessage }
 
-    val error by model.error
-
-    ErrorHandler(error, snackbarHostState)
+    SnackbarHandler(snackbarMessage, snackbarHostState)
 
     Column(
         modifier = Modifier.padding(paddingValues),

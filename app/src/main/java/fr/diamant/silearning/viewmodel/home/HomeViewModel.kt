@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import fr.diamant.silearning.SILearningApplication
 import fr.diamant.silearning.data.entity.Category
-import fr.diamant.silearning.error.ErrorType
+import fr.diamant.silearning.error.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
 import kotlinx.coroutines.launch
 
@@ -17,7 +17,7 @@ class HomeViewModel(application: Application): AndroidViewModel(application) {
 
     val categories = mutableStateListOf<Category>()
     var selectedCategories = mutableStateOf<Category?>(null)
-    val error = mutableStateOf(ErrorType.DEFAULT)
+    val snackbarMessage = mutableStateOf(MessageType.DEFAULT)
 
     init {
         viewModelScope.launch {
@@ -40,7 +40,7 @@ class HomeViewModel(application: Application): AndroidViewModel(application) {
             val destination = NavigationDestinations.Game.route + "/${it.id}"
             navController.navigate(destination)
         } ?: run {
-            error.value = ErrorType.NO_CATEGORY_SELECTED
+            snackbarMessage.value = MessageType.NO_CATEGORY_SELECTED
         }
     }
 }

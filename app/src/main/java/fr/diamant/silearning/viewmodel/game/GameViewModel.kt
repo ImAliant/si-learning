@@ -9,7 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import fr.diamant.silearning.SILearningApplication
 import fr.diamant.silearning.data.entity.Question
-import fr.diamant.silearning.error.ErrorType
+import fr.diamant.silearning.error.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -25,7 +25,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     var size = mutableIntStateOf(0)
 
     var currentQuestion = mutableStateOf<Question?>(null)
-    var error = mutableStateOf(ErrorType.DEFAULT)
+    var snackbarMessage = mutableStateOf(MessageType.DEFAULT)
     var userAnswer = mutableStateOf("")
 
     fun initializeGame(categoryId: Int) {
@@ -36,7 +36,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
                 initCurrentQuestion()
                 isGameStarted.value = true
             } else {
-                error.value = ErrorType.NO_QUESTION_FOUND_FOR_CATEGORY
+                snackbarMessage.value = MessageType.NO_QUESTION_FOUND_FOR_CATEGORY
             }
 
             Logger.getLogger("GameViewModel").info("Game initialized")
@@ -65,7 +65,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
             currentQuestion.value = questions[currentQuestionIndex.intValue]
         } else {
             Logger.getLogger("GameViewModel").warning("No question found for category")
-            error.value = ErrorType.NO_QUESTION_FOUND_FOR_CATEGORY
+            snackbarMessage.value = MessageType.NO_QUESTION_FOUND_FOR_CATEGORY
         }
     }
 

@@ -27,7 +27,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Question
-import fr.diamant.silearning.error.ErrorHandler
+import fr.diamant.silearning.error.SnackbarHandler
 import fr.diamant.silearning.viewmodel.game.GameViewModel
 
 @Composable
@@ -41,13 +41,13 @@ fun GameScreen(
     val current by remember { model.currentQuestion }
     val userAnswer by remember { model.userAnswer }
     val context = LocalContext.current
-    val error by remember { model.error }
+    val snackbarMessage by remember { model.snackbarMessage }
 
     LaunchedEffect(categoryId) {
         model.initializeGame(categoryId)
     }
 
-    ErrorHandler(error, snackbarHostState)
+    SnackbarHandler(snackbarMessage, snackbarHostState)
 
     GameUI(
         navController = navController,
