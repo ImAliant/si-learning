@@ -21,6 +21,9 @@ private suspend fun checkError(error: ErrorType, context: Context, snackbarHostS
         ErrorType.NO_CATEGORY_SELECTED -> {
             snackbarHostState.showSnackbar(context.getString(R.string.no_category_selected))
         }
+        ErrorType.NO_QUESTION_FOUND_FOR_CATEGORY -> {
+            snackbarHostState.showSnackbar(context.getString(R.string.no_question_found_for_category))
+        }
         else -> {
             // Do nothing
         }

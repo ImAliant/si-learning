@@ -1,8 +1,9 @@
 <resources>
     <string name="app_name">SILearning</string>
     <string name="play">Jouer</string>
-    <string name="no_category_selected">Aucune catégorie sélectionnée</string>
     <string name="answer_tf">Réponse:</string>
     <string name="next_btn">OK</string>
     <string name="check_btn">Vérifier</string>
+    <string name="no_category_selected">Aucune catégorie sélectionnée</string>
+    <string name="no_question_found_for_category">Aucune question trouvée pour cette catégorie</string>
 </resources>
