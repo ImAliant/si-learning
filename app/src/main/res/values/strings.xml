@@ -2,4 +2,5 @@
     <string name="app_name">SILearning</string>
     <string name="play">Jouer</string>
     <string name="no_category_selected">Aucune catégorie sélectionnée</string>
+    <string name="answer_tf">Réponse:</string>
 </resources>

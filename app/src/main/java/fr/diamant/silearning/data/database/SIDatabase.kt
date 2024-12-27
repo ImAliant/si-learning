@@ -51,11 +51,6 @@ abstract class SIDatabase: RoomDatabase() {
                 Logger.getLogger("SIDatabase").info("Populating database with ${data.size} categories")
 
                 data.forEach { categoryWithQuestions ->
-                    /*val categoryId = dao?.insertCategory(
-                        Category(
-                            name = categoryWithQuestions.categoryName
-                        )
-                    )*/
                     val categoryId = dao?.getCategoryIdByName(categoryWithQuestions.categoryName)
                         ?: dao?.insertCategory(
                             Category(

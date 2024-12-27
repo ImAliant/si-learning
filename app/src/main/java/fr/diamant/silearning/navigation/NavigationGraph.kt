@@ -34,7 +34,7 @@ fun NavigationGraph(navController: NavHostController, padding: PaddingValues, sn
             route = NavigationDestinations.Game.route + "/{categoryId}",
             arguments = listOf(navArgument("categoryId") { type = NavType.IntType })
         ) {
-            GameScreen(navController, padding, it.arguments?.getInt("categoryId"))
+            GameScreen(navController, padding, it.arguments!!.getInt("categoryId"))
         }
     }
 }
