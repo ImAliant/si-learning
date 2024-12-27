@@ -73,7 +73,7 @@ private fun GameUI(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        QuestionText(question = current)
+        QuestionText(question = current, context = context)
 
         AnswerInput(
             userAnswer = userAnswer,
@@ -99,16 +99,16 @@ private fun Information(model: GameViewModel) {
     val size by remember { model.size }
 
     Text(
-        text = "Answer the question: $currentIndex/$size",
+        text = "$currentIndex/$size",
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(horizontal = 16.dp)
     )
 }
 
 @Composable
-private fun QuestionText(question: String?) {
+private fun QuestionText(question: String?, context: Context) {
     Text(
-        text = question ?: "No question found",
+        text = question ?: context.getString(R.string.no_question_found),
         textAlign = TextAlign.Center,
         modifier = Modifier.padding(horizontal = 16.dp)
     )
