@@ -51,7 +51,7 @@ abstract class SIDatabase: RoomDatabase() {
                 val data: List<CategoryWithQuestionsJSON> = Gson().fromJson(jsonString, type)
                 Logger.getLogger("SIDatabase").info("Populating database with ${data.size} categories")
 
-                dao?.insertCategory(Category(id = 0, name = context.getString(R.string.random_cat)))
+                dao?.insertCategory(Category(name = context.getString(R.string.random_cat)))
 
                 data.forEach { categoryWithQuestions ->
                     val categoryId = dao?.getCategoryIdByName(categoryWithQuestions.categoryName)
