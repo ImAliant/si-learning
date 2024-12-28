@@ -29,6 +29,7 @@ import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.error.SnackbarHandler
 import fr.diamant.silearning.viewmodel.game.GameViewModel
+import java.util.logging.Logger
 
 @Composable
 fun GameScreen(
@@ -48,6 +49,7 @@ fun GameScreen(
     }
 
     SnackbarHandler(snackbarMessage, snackbarHostState)
+    TimerHandler(navController, model)
 
     GameUI(
         navController = navController,
@@ -73,7 +75,13 @@ private fun GameUI(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Information(model)
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.fillMaxWidth().padding(8.dp)
+        ) {
+            Information(model)
+            TimerUI(model)
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -86,8 +94,8 @@ private fun GameUI(
         )
 
         ActionButtons(
-            onCheckClick = { model.checkAnswer(navController) },
-            onNextClick = { model.nextQuestion(navController) },
+            onCheckClick = { model.checkAnswer(navController); model.resetTimer() },
+            onNextClick = { model.nextQuestion(navController); model.resetTimer() },
             checkEnabler = { userAnswer.isNotEmpty() },
             checkText = context.getString(R.string.check_btn),
             nextText = context.getString(R.string.next_btn)
@@ -154,5 +162,30 @@ private fun ActionButtons(
         ) {
             Text(text = nextText)
         }
+    }
+}
+
+@Composable
+private fun TimerUI(model: GameViewModel) {
+    val currentDelay by remember { model.currentDelay }
+
+    Text(text = currentDelay.toString())
+}
+
+@Composable
+private fun TimerHandler(
+    navController: NavController,
+    model: GameViewModel
+) {
+    val timerOn by remember { model.timerOn }
+    val currentDelay by remember { model.currentDelay }
+
+    if (currentDelay == 0 && !timerOn) {
+        model.checkAnswer(navController)
+        model.startTimer()
+    }
+
+    if (!timerOn) {
+        model.startTimer()
     }
 }

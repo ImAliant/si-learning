@@ -11,6 +11,8 @@ import fr.diamant.silearning.SILearningApplication
 import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.error.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import java.util.logging.Logger
@@ -20,6 +22,12 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     private var currentQuestionIndex = mutableIntStateOf(0)
     private var isGameStarted = mutableStateOf(false)
     private var questions = mutableStateListOf<Question>()
+
+    private var delayToRespond = mutableIntStateOf(10)
+    private var countdownJob = mutableStateOf<Job?>(null)
+
+    var timerOn = mutableStateOf(false)
+    var currentDelay = mutableIntStateOf(delayToRespond.intValue)
 
     var currentQI = mutableIntStateOf(1)
     var size = mutableIntStateOf(0)
@@ -38,11 +46,6 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
             } else {
                 snackbarMessage.value = MessageType.NO_QUESTION_FOUND_FOR_CATEGORY
             }
-
-            Logger.getLogger("GameViewModel").info("Game initialized")
-            Logger.getLogger("GameViewModel").info("Current question: $currentQuestion")
-            Logger.getLogger("GameViewModel").info("Questions size: ${questions.size}")
-            Logger.getLogger("GameViewModel").info("Current question index: $currentQuestionIndex")
         }
     }
 
@@ -61,10 +64,8 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
 
     private fun initCurrentQuestion() {
         if (questions.isNotEmpty()) {
-            Logger.getLogger("GameViewModel").info("Current question index: $currentQuestionIndex")
             currentQuestion.value = questions[currentQuestionIndex.intValue]
         } else {
-            Logger.getLogger("GameViewModel").warning("No question found for category")
             snackbarMessage.value = MessageType.NO_QUESTION_FOUND_FOR_CATEGORY
         }
     }
@@ -91,5 +92,25 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
 
     fun updateUserAnswer(answer: String) {
         userAnswer.value = answer
+    }
+
+    fun startTimer() {
+        countdownJob.value?.cancel()
+        countdownJob.value = null
+
+        currentDelay.intValue = delayToRespond.intValue
+        timerOn.value = true
+
+        countdownJob.value = viewModelScope.launch {
+            while (currentDelay.intValue > 0) {
+                delay(1000)
+                currentDelay.intValue--
+            }
+            timerOn.value = false
+        }
+    }
+
+    fun resetTimer() {
+        timerOn.value = false
     }
 }
