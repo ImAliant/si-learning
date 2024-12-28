@@ -27,9 +27,8 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Question
-import fr.diamant.silearning.error.SnackbarHandler
+import fr.diamant.silearning.message.SnackbarHandler
 import fr.diamant.silearning.viewmodel.game.GameViewModel
-import java.util.logging.Logger
 
 @Composable
 fun GameScreen(
@@ -44,10 +43,7 @@ fun GameScreen(
     val context = LocalContext.current
     val snackbarMessage by remember { model.snackbarMessage }
 
-    LaunchedEffect(categoryId) {
-        model.initializeGame(categoryId)
-    }
-
+    InitializeGame(model, categoryId)
     SnackbarHandler(snackbarMessage, snackbarHostState)
     TimerHandler(navController, model)
 
@@ -59,6 +55,13 @@ fun GameScreen(
         context = context,
         model = model
     )
+}
+
+@Composable
+private fun InitializeGame(model: GameViewModel, categoryId: Int) {
+    LaunchedEffect(categoryId) {
+        model.initializeGame(categoryId)
+    }
 }
 
 @Composable
@@ -75,13 +78,7 @@ private fun GameUI(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceBetween
     ) {
-        Row(
-            horizontalArrangement = Arrangement.SpaceBetween,
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
-        ) {
-            Information(model)
-            TimerUI(model)
-        }
+        Information(model)
 
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -95,7 +92,7 @@ private fun GameUI(
 
         ActionButtons(
             onCheckClick = { model.checkAnswer(navController); model.resetTimer() },
-            onNextClick = { model.nextQuestion(navController); model.resetTimer() },
+            onNextClick = { model.moveToNextQuestion(navController); model.resetTimer() },
             checkEnabler = { userAnswer.isNotEmpty() },
             checkText = context.getString(R.string.check_btn),
             nextText = context.getString(R.string.next_btn)
@@ -107,6 +104,17 @@ private fun GameUI(
 
 @Composable
 private fun Information(model: GameViewModel) {
+    Row(
+        horizontalArrangement = Arrangement.SpaceBetween,
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
+    ) {
+        CurrentQuestion(model)
+        Timer(model)
+    }
+}
+
+@Composable
+private fun CurrentQuestion(model: GameViewModel) {
     val currentIndex by remember { model.currentQI }
     val size by remember { model.size }
 
@@ -166,7 +174,7 @@ private fun ActionButtons(
 }
 
 @Composable
-private fun TimerUI(model: GameViewModel) {
+private fun Timer(model: GameViewModel) {
     val currentDelay by remember { model.currentDelay }
 
     Text(text = currentDelay.toString())

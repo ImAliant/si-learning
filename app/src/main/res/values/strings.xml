@@ -7,4 +7,6 @@
     <string name="no_category_selected">Aucune catégorie sélectionnée</string>
     <string name="no_question_found_for_category">Aucune question trouvée pour cette catégorie</string>
     <string name="no_question_found">Aucune question trouvée</string>
+    <string name="correct_answer">Bonne réponse</string>
+    <string name="wrong_answer">Mauvaise réponse</string>
 </resources>

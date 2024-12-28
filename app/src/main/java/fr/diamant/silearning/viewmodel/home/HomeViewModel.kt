@@ -8,7 +8,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import fr.diamant.silearning.SILearningApplication
 import fr.diamant.silearning.data.entity.Category
-import fr.diamant.silearning.error.MessageType
+import fr.diamant.silearning.message.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
 import kotlinx.coroutines.launch
 

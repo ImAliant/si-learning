@@ -1,4 +1,4 @@
-package fr.diamant.silearning.error
+package fr.diamant.silearning.message
 
 import android.content.Context
 import androidx.compose.material3.SnackbarHostState
@@ -6,7 +6,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 import fr.diamant.silearning.R
-import java.util.logging.Logger
 
 @Composable
 fun SnackbarHandler(message: MessageType, snackbarHostState: SnackbarHostState) {
@@ -24,6 +23,12 @@ private suspend fun checkMessage(message: MessageType, context: Context, snackba
         }
         MessageType.NO_QUESTION_FOUND_FOR_CATEGORY -> {
             snackbarHostState.showSnackbar(context.getString(R.string.no_question_found_for_category))
+        }
+        MessageType.CORRECT_ANSWER -> {
+            snackbarHostState.showSnackbar(context.getString(R.string.correct_answer))
+        }
+        MessageType.WRONG_ANSWER -> {
+            snackbarHostState.showSnackbar(context.getString(R.string.wrong_answer))
         }
         else -> {
             // Do nothing

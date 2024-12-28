@@ -26,7 +26,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Category
-import fr.diamant.silearning.error.SnackbarHandler
+import fr.diamant.silearning.message.SnackbarHandler
 import fr.diamant.silearning.viewmodel.home.HomeViewModel
 
 @Composable

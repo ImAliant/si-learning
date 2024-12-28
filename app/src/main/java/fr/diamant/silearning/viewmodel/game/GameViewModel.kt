@@ -9,13 +9,12 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import fr.diamant.silearning.SILearningApplication
 import fr.diamant.silearning.data.entity.Question
-import fr.diamant.silearning.error.MessageType
+import fr.diamant.silearning.message.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import java.util.logging.Logger
 
 class GameViewModel(application: Application): AndroidViewModel(application) {
     private val _container = (application as SILearningApplication).container
@@ -23,7 +22,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     private var isGameStarted = mutableStateOf(false)
     private var questions = mutableStateListOf<Question>()
 
-    private var delayToRespond = mutableIntStateOf(10)
+    private var delayToRespond = mutableIntStateOf(5)
     private var countdownJob = mutableStateOf<Job?>(null)
 
     var timerOn = mutableStateOf(false)
@@ -38,10 +37,10 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
 
     fun initializeGame(categoryId: Int) {
         viewModelScope.launch {
-            getQuestions(categoryId)
+            fetchQuestions(categoryId)
 
             if (questions.isNotEmpty() && !isGameStarted.value) {
-                initCurrentQuestion()
+                setCurrentQuestion()
                 isGameStarted.value = true
             } else {
                 snackbarMessage.value = MessageType.NO_QUESTION_FOUND_FOR_CATEGORY
@@ -49,7 +48,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    private suspend fun getQuestions(categoryId: Int) {
+    private suspend fun fetchQuestions(categoryId: Int) {
         val fetchedQuestions = _container.Repository.getQuestionsByCategoryId(categoryId).first()
 
         questions.clear()
@@ -62,7 +61,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
         questions.shuffle()
     }
 
-    private fun initCurrentQuestion() {
+    private fun setCurrentQuestion() {
         if (questions.isNotEmpty()) {
             currentQuestion.value = questions[currentQuestionIndex.intValue]
         } else {
@@ -72,14 +71,14 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
 
     fun checkAnswer(navController: NavController) {
         if (currentQuestion.value?.answer == userAnswer.value) {
-            Logger.getLogger("GameViewModel").info("Correct answer")
+            snackbarMessage.value = MessageType.CORRECT_ANSWER
         } else {
-            Logger.getLogger("GameViewModel").warning("Wrong answer")
+            snackbarMessage.value = MessageType.WRONG_ANSWER
         }
-        nextQuestion(navController)
+        moveToNextQuestion(navController)
     }
 
-    fun nextQuestion(navController: NavController) {
+    fun moveToNextQuestion(navController: NavController) {
         currentQuestionIndex.intValue++
         if (currentQuestionIndex.intValue < questions.size) {
             currentQuestion.value = questions[currentQuestionIndex.intValue]
@@ -95,8 +94,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     }
 
     fun startTimer() {
-        countdownJob.value?.cancel()
-        countdownJob.value = null
+        resetCountdownJob()
 
         currentDelay.intValue = delayToRespond.intValue
         timerOn.value = true
@@ -108,6 +106,11 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
             }
             timerOn.value = false
         }
+    }
+
+    private fun resetCountdownJob() {
+        countdownJob.value?.cancel()
+        countdownJob.value = null
     }
 
     fun resetTimer() {
