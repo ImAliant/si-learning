@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
+import fr.diamant.silearning.R
 import fr.diamant.silearning.data.dao.SIDao
 import fr.diamant.silearning.data.entity.Category
 import fr.diamant.silearning.data.entity.CategoryWithQuestionsJSON
@@ -49,6 +50,8 @@ abstract class SIDatabase: RoomDatabase() {
                 val type = object : TypeToken<List<CategoryWithQuestionsJSON>>() {}.type
                 val data: List<CategoryWithQuestionsJSON> = Gson().fromJson(jsonString, type)
                 Logger.getLogger("SIDatabase").info("Populating database with ${data.size} categories")
+
+                dao?.insertCategory(Category(id = 0, name = context.getString(R.string.random_cat)))
 
                 data.forEach { categoryWithQuestions ->
                     val categoryId = dao?.getCategoryIdByName(categoryWithQuestions.categoryName)

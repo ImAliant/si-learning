@@ -11,6 +11,7 @@ import fr.diamant.silearning.data.entity.Category
 import fr.diamant.silearning.message.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
 import kotlinx.coroutines.launch
+import java.util.logging.Logger
 
 class HomeViewModel(application: Application): AndroidViewModel(application) {
     private val _container = (application as SILearningApplication).container
@@ -24,6 +25,11 @@ class HomeViewModel(application: Application): AndroidViewModel(application) {
             _container.Repository.getAllCategories().collect {
                 categories.clear()
                 categories.addAll(it)
+
+                Logger.getLogger("HomeViewModel").info("Categories loaded: ${categories.size}")
+                categories.forEach { category ->
+                    Logger.getLogger("HomeViewModel").info("Category: ${category.name} - ${category.id}")
+                }
             }
         }
     }

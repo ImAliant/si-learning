@@ -9,6 +9,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import fr.diamant.silearning.SILearningApplication
 import fr.diamant.silearning.data.entity.Question
+import fr.diamant.silearning.data.entity.RANDOM_ID
 import fr.diamant.silearning.message.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
 import kotlinx.coroutines.Job
@@ -49,7 +50,11 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     }
 
     private suspend fun fetchQuestions(categoryId: Int) {
-        val fetchedQuestions = _container.Repository.getQuestionsByCategoryId(categoryId).first()
+        val fetchedQuestions: List<Question> = if (categoryId == RANDOM_ID) {
+            _container.Repository.getAllQuestions().first().shuffled().take(10)
+        } else {
+            _container.Repository.getQuestionsByCategoryId(categoryId).first()
+        }
 
         questions.clear()
         questions.addAll(fetchedQuestions)
