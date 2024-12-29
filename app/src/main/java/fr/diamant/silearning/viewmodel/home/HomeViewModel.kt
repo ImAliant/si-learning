@@ -16,9 +16,8 @@ import java.util.logging.Logger
 class HomeViewModel(application: Application): AndroidViewModel(application) {
     private val _container = (application as SILearningApplication).container
 
-    val categories = mutableStateListOf<Category>()
-    var selectedCategories = mutableStateOf<Category?>(null)
-    val snackbarMessage = mutableStateOf(MessageType.DEFAULT)
+    var categories = mutableStateListOf<Category>()
+    var snackbarMessage = mutableStateOf(MessageType.DEFAULT)
 
     init {
         viewModelScope.launch {
@@ -34,19 +33,8 @@ class HomeViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun updateSelection(category: Category) {
-        when {
-            selectedCategories.value == category -> selectedCategories.value = null
-            else -> selectedCategories.value = category
-        }
-    }
-
-    fun playSelected(navController: NavController) {
-        selectedCategories.value?.let {
-            val destination = NavigationDestinations.Game.route + "/${it.id}"
-            navController.navigate(destination)
-        } ?: run {
-            snackbarMessage.value = MessageType.NO_CATEGORY_SELECTED
-        }
+    fun play(category: Category, navController: NavController) {
+        val destination = NavigationDestinations.Game.route + "/${category.id}"
+        navController.navigate(destination)
     }
 }

@@ -24,7 +24,7 @@ fun NavigationGraph(navController: NavHostController, padding: PaddingValues, sn
         modifier = modifier
     ) {
         composable(NavigationDestinations.Home.route) {
-            HomeScreen(navController, padding, snackbarHostState)
+            HomeScreen(navController, snackbarHostState)
         }
         composable(NavigationDestinations.Settings.route) {
             SettingsScreen(navController, padding)
