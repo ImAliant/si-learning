@@ -23,7 +23,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     private var isGameStarted = mutableStateOf(false)
     private var questions = mutableStateListOf<Question>()
 
-    private var delayToRespond = mutableIntStateOf(5)
+    private var delayToRespond = mutableIntStateOf(20)
     private var countdownJob = mutableStateOf<Job?>(null)
 
     var timerOn = mutableStateOf(false)
@@ -88,6 +88,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
         if (currentQuestionIndex.intValue < questions.size) {
             currentQuestion.value = questions[currentQuestionIndex.intValue]
             currentQI.intValue++
+            clearAnswer()
         } else {
             val destination = NavigationDestinations.Home.route
             navController.navigate(destination)
@@ -96,6 +97,10 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
 
     fun updateUserAnswer(answer: String) {
         userAnswer.value = answer
+    }
+
+    private fun clearAnswer() {
+        userAnswer.value = ""
     }
 
     fun startTimer() {
