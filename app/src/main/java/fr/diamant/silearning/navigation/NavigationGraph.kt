@@ -11,10 +11,8 @@ import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import fr.diamant.silearning.navigation.route.GAME
 import fr.diamant.silearning.navigation.route.HOME
-import fr.diamant.silearning.navigation.route.SETTINGS
 import fr.diamant.silearning.ui.game.GameScreen
 import fr.diamant.silearning.ui.home.HomeScreen
-import fr.diamant.silearning.ui.settings.SettingsScreen
 
 @Composable
 fun NavigationGraph(navController: NavHostController, padding: PaddingValues, snackbarHostState: SnackbarHostState, modifier: Modifier = Modifier) {
@@ -25,9 +23,6 @@ fun NavigationGraph(navController: NavHostController, padding: PaddingValues, sn
     ) {
         composable(NavigationDestinations.Home.route) {
             HomeScreen(navController, snackbarHostState)
-        }
-        composable(NavigationDestinations.Settings.route) {
-            SettingsScreen(navController, padding)
         }
 
         composable(
@@ -41,6 +36,5 @@ fun NavigationGraph(navController: NavHostController, padding: PaddingValues, sn
 
 sealed class NavigationDestinations(val route: String) {
     data object Home : NavigationDestinations(HOME)
-    data object Settings : NavigationDestinations(SETTINGS)
     data object Game : NavigationDestinations(GAME)
 }
