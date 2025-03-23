@@ -23,9 +23,10 @@ data class Question(
     @PrimaryKey(autoGenerate = true) val id: Int = 0,
     val question: String,
     val answer: String,
+    val image: Int,
     val categoryId: Int
 ) {
     override fun toString(): String {
-        return "Question(id=$id, question='$question', answer='$answer', categoryId=$categoryId)"
+        return "Question(id=$id, question='$question', answer='$answer', image='$image', categoryId=$categoryId)"
     }
 }

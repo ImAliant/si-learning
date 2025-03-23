@@ -1,15 +1,18 @@
 package fr.diamant.silearning.ui.game
 
 import android.content.Context
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHostState
@@ -21,6 +24,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -29,6 +33,7 @@ import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.message.SnackbarHandler
 import fr.diamant.silearning.viewmodel.game.GameViewModel
+import java.util.logging.Logger
 
 @Composable
 fun GameScreen(
@@ -38,7 +43,8 @@ fun GameScreen(
     categoryId: Int,
     model: GameViewModel = viewModel()
 ) {
-    val current by remember { model.currentQuestion }
+    val currentQ by remember { model.currentQuestion }
+    val currentI by remember { model.currentImage }
     val userAnswer by remember { model.userAnswer }
     val context = LocalContext.current
     val snackbarMessage by remember { model.snackbarMessage }
@@ -50,7 +56,8 @@ fun GameScreen(
     GameUI(
         navController = navController,
         paddingValues = paddingValues,
-        current = current,
+        currentQ = currentQ,
+        currentI = currentI,
         userAnswer = userAnswer,
         context = context,
         model = model
@@ -68,7 +75,8 @@ private fun InitializeGame(model: GameViewModel, categoryId: Int) {
 private fun GameUI(
     navController: NavController,
     paddingValues: PaddingValues,
-    current: Question?,
+    currentQ: Question?,
+    currentI: Int?,
     userAnswer: String,
     context: Context,
     model: GameViewModel
@@ -82,7 +90,9 @@ private fun GameUI(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        QuestionText(question = current?.question, context = context)
+        QuestionText(question = currentQ?.question, context = context)
+
+        ImageViewer(currentImage = currentI)
 
         AnswerInput(
             userAnswer = userAnswer,
@@ -142,6 +152,19 @@ private fun AnswerInput(userAnswer: String, context: Context, onAnswerChange: (S
         label = { Text(text = context.getString(R.string.answer_tf)) },
         modifier = Modifier.padding(horizontal = 16.dp)
     )
+}
+
+@Composable
+private fun ImageViewer(currentImage: Int?) {
+    if (currentImage != null && currentImage != 0) {
+        Image(
+            painter = painterResource(id = currentImage),
+            contentDescription = null,
+            modifier = Modifier
+                .height(300.dp)
+                .width(300.dp)
+        )
+    }
 }
 
 @Composable

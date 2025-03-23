@@ -63,10 +63,17 @@ abstract class SIDatabase: RoomDatabase() {
 
                     categoryWithQuestions.questions.forEach { questionJSON ->
                         if (categoryId != null) {
+                            val imageResId = if (!questionJSON.image.isNullOrEmpty()) {
+                                context.resources.getIdentifier(questionJSON.image, "drawable", context.packageName)
+                            } else {
+                                0 // Default to 0 if image is null or empty
+                            }
+
                             dao?.insertQuestion(
                                 Question(
                                     question = questionJSON.question,
                                     answer = questionJSON.answer,
+                                    image = imageResId,
                                     categoryId = categoryId.toInt()
                                 )
                             )

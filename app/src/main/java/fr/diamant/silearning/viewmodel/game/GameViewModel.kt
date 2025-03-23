@@ -33,6 +33,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     var size = mutableIntStateOf(0)
 
     var currentQuestion = mutableStateOf<Question?>(null)
+    var currentImage = mutableStateOf<Int?>(null)
     var snackbarMessage = mutableStateOf(MessageType.DEFAULT)
     var userAnswer = mutableStateOf("")
 
@@ -51,7 +52,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
 
     private suspend fun fetchQuestions(categoryId: Int) {
         val fetchedQuestions: List<Question> = if (categoryId == RANDOM_ID) {
-            _container.Repository.getAllQuestions().first().shuffled().take(10)
+            _container.Repository.getAllQuestions().first().shuffled().take(50)
         } else {
             _container.Repository.getQuestionsByCategoryId(categoryId).first()
         }
@@ -68,7 +69,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
 
     private fun setCurrentQuestion() {
         if (questions.isNotEmpty()) {
-            currentQuestion.value = questions[currentQuestionIndex.intValue]
+            setQuestion(questions[currentQuestionIndex.intValue])
         } else {
             snackbarMessage.value = MessageType.NO_QUESTION_FOUND_FOR_CATEGORY
         }
@@ -86,7 +87,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     fun moveToNextQuestion(navController: NavController) {
         currentQuestionIndex.intValue++
         if (currentQuestionIndex.intValue < questions.size) {
-            currentQuestion.value = questions[currentQuestionIndex.intValue]
+            setQuestion(questions[currentQuestionIndex.intValue])
             currentQI.intValue++
             clearAnswer()
         } else {
@@ -121,6 +122,11 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     private fun resetCountdownJob() {
         countdownJob.value?.cancel()
         countdownJob.value = null
+    }
+
+    private fun setQuestion(question: Question) {
+        currentQuestion.value = question
+        currentImage.value = question.image
     }
 
     fun resetTimer() {
