@@ -67,8 +67,7 @@ fun TopBar() = CenterAlignedTopAppBar(title = {
 @Composable
 fun BottomBar(navController: NavController) {
     val items = listOf(
-        NavigationDestinations.Home,
-        NavigationDestinations.Settings
+        NavigationDestinations.Home
     )
 
     SetNavigationBar(navController, items)
