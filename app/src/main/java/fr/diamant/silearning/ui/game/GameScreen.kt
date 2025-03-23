@@ -23,10 +23,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
@@ -44,21 +46,16 @@ fun GameScreen(
     model: GameViewModel = viewModel()
 ) {
     val currentQ by remember { model.currentQuestion }
-    val currentI by remember { model.currentImage }
-    val userAnswer by remember { model.userAnswer }
     val context = LocalContext.current
     val snackbarMessage by remember { model.snackbarMessage }
 
     InitializeGame(model, categoryId)
     SnackbarHandler(snackbarMessage, snackbarHostState)
-    TimerHandler(navController, model)
 
     GameUI(
         navController = navController,
         paddingValues = paddingValues,
         currentQ = currentQ,
-        currentI = currentI,
-        userAnswer = userAnswer,
         context = context,
         model = model
     )
@@ -76,8 +73,6 @@ private fun GameUI(
     navController: NavController,
     paddingValues: PaddingValues,
     currentQ: Question?,
-    currentI: Int?,
-    userAnswer: String,
     context: Context,
     model: GameViewModel
 ) {
@@ -92,19 +87,18 @@ private fun GameUI(
 
         QuestionText(question = currentQ?.question, context = context)
 
-        ImageViewer(currentImage = currentI)
+        ImageViewer(currentImage = currentQ?.image)
 
-        AnswerInput(
-            userAnswer = userAnswer,
+        AnswerViewer(
+            model = model,
             context = context,
-            onAnswerChange = model::updateUserAnswer
+            currentAnswer = currentQ?.answer
         )
 
         ActionButtons(
-            onCheckClick = { model.checkAnswer(navController); model.resetTimer() },
-            onNextClick = { model.moveToNextQuestion(navController); model.resetTimer() },
-            checkEnabler = { userAnswer.isNotEmpty() },
-            checkText = context.getString(R.string.check_btn),
+            onPrintClick = { model.printAnswer() },
+            onNextClick = { model.moveToNextQuestion(navController) },
+            checkText = context.getString(R.string.print_btn),
             nextText = context.getString(R.string.next_btn)
         )
 
@@ -119,7 +113,6 @@ private fun Information(model: GameViewModel) {
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
         CurrentQuestion(model)
-        Timer(model)
     }
 }
 
@@ -145,13 +138,17 @@ private fun QuestionText(question: String?, context: Context) {
 }
 
 @Composable
-private fun AnswerInput(userAnswer: String, context: Context, onAnswerChange: (String) -> Unit) {
-    OutlinedTextField(
-        value = userAnswer,
-        onValueChange = onAnswerChange,
-        label = { Text(text = context.getString(R.string.answer_tf)) },
-        modifier = Modifier.padding(horizontal = 16.dp)
-    )
+private fun AnswerViewer(model: GameViewModel, context: Context, currentAnswer: String?) {
+    val showAnwser by remember { model.showAnswer }
+
+    if (showAnwser) {
+        Text(
+            text = currentAnswer ?: "",
+            textAlign = TextAlign.Center,
+            color = Color(ContextCompat.getColor(context, R.color.red)),
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
+    }
 }
 
 @Composable
@@ -169,10 +166,8 @@ private fun ImageViewer(currentImage: Int?) {
 
 @Composable
 private fun ActionButtons(
-    onCheckClick: () -> Unit,
+    onPrintClick: () -> Unit,
     onNextClick: () -> Unit,
-    checkEnabler: () -> Boolean = { true },
-    nextEnabler: () -> Boolean = { true },
     checkText: String,
     nextText: String
 ) {
@@ -181,42 +176,15 @@ private fun ActionButtons(
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
         Button(
-            onClick = onCheckClick,
-            enabled = checkEnabler()
+            onClick = onPrintClick
         ) {
             Text(text = checkText)
         }
 
         Button(
-            onClick = onNextClick,
-            enabled = nextEnabler()
+            onClick = onNextClick
         ) {
             Text(text = nextText)
         }
-    }
-}
-
-@Composable
-private fun Timer(model: GameViewModel) {
-    val currentDelay by remember { model.currentDelay }
-
-    Text(text = currentDelay.toString())
-}
-
-@Composable
-private fun TimerHandler(
-    navController: NavController,
-    model: GameViewModel
-) {
-    val timerOn by remember { model.timerOn }
-    val currentDelay by remember { model.currentDelay }
-
-    if (currentDelay == 0 && !timerOn) {
-        model.checkAnswer(navController)
-        model.startTimer()
-    }
-
-    if (!timerOn) {
-        model.startTimer()
     }
 }

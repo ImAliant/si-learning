@@ -10,4 +10,5 @@
     <string name="correct_answer">Bonne réponse</string>
     <string name="wrong_answer">Mauvaise réponse</string>
     <string name="random_cat">Random</string>
+    <string name="print_btn">Vérifier</string>
 </resources>

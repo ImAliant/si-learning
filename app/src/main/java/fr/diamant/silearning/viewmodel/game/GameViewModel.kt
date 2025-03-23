@@ -23,19 +23,12 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     private var isGameStarted = mutableStateOf(false)
     private var questions = mutableStateListOf<Question>()
 
-    private var delayToRespond = mutableIntStateOf(20)
-    private var countdownJob = mutableStateOf<Job?>(null)
-
-    var timerOn = mutableStateOf(false)
-    var currentDelay = mutableIntStateOf(delayToRespond.intValue)
-
     var currentQI = mutableIntStateOf(1)
     var size = mutableIntStateOf(0)
 
     var currentQuestion = mutableStateOf<Question?>(null)
-    var currentImage = mutableStateOf<Int?>(null)
     var snackbarMessage = mutableStateOf(MessageType.DEFAULT)
-    var userAnswer = mutableStateOf("")
+    var showAnswer = mutableStateOf(false)
 
     fun initializeGame(categoryId: Int) {
         viewModelScope.launch {
@@ -75,61 +68,23 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun checkAnswer(navController: NavController) {
-        if (currentQuestion.value?.answer == userAnswer.value) {
-            snackbarMessage.value = MessageType.CORRECT_ANSWER
-        } else {
-            snackbarMessage.value = MessageType.WRONG_ANSWER
-        }
-        moveToNextQuestion(navController)
-    }
-
     fun moveToNextQuestion(navController: NavController) {
         currentQuestionIndex.intValue++
         if (currentQuestionIndex.intValue < questions.size) {
             setQuestion(questions[currentQuestionIndex.intValue])
             currentQI.intValue++
-            clearAnswer()
+            showAnswer.value = false
         } else {
             val destination = NavigationDestinations.Home.route
             navController.navigate(destination)
         }
     }
 
-    fun updateUserAnswer(answer: String) {
-        userAnswer.value = answer
-    }
-
-    private fun clearAnswer() {
-        userAnswer.value = ""
-    }
-
-    fun startTimer() {
-        resetCountdownJob()
-
-        currentDelay.intValue = delayToRespond.intValue
-        timerOn.value = true
-
-        countdownJob.value = viewModelScope.launch {
-            while (currentDelay.intValue > 0) {
-                delay(1000)
-                currentDelay.intValue--
-            }
-            timerOn.value = false
-        }
-    }
-
-    private fun resetCountdownJob() {
-        countdownJob.value?.cancel()
-        countdownJob.value = null
+    fun printAnswer() {
+        showAnswer.value = true
     }
 
     private fun setQuestion(question: Question) {
         currentQuestion.value = question
-        currentImage.value = question.image
-    }
-
-    fun resetTimer() {
-        timerOn.value = false
     }
 }
