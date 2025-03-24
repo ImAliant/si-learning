@@ -7,14 +7,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Button
-import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,6 +25,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
@@ -35,7 +35,6 @@ import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.message.SnackbarHandler
 import fr.diamant.silearning.viewmodel.game.GameViewModel
-import java.util.logging.Logger
 
 @Composable
 fun GameScreen(
@@ -96,8 +95,10 @@ private fun GameUI(
         )
 
         ActionButtons(
+            model = model,
             onPrintClick = { model.printAnswer() },
             onNextClick = { model.moveToNextQuestion(navController) },
+            onChangeClick = { model.changeStatusQuestion() },
             checkText = context.getString(R.string.print_btn),
             nextText = context.getString(R.string.next_btn)
         )
@@ -166,11 +167,15 @@ private fun ImageViewer(currentImage: Int?) {
 
 @Composable
 private fun ActionButtons(
+    model: GameViewModel,
     onPrintClick: () -> Unit,
     onNextClick: () -> Unit,
+    onChangeClick: () -> Unit,
     checkText: String,
     nextText: String
 ) {
+    val needHelp by remember { model.currentNeedHelp }
+
     Row(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth().padding(8.dp)
@@ -185,6 +190,20 @@ private fun ActionButtons(
             onClick = onNextClick
         ) {
             Text(text = nextText)
+        }
+    }
+
+    Row(
+        horizontalArrangement = Arrangement.SpaceEvenly,
+        modifier = Modifier.fillMaxWidth().padding(8.dp)
+    ) {
+        Button(
+            onClick = onChangeClick,
+            colors = ButtonDefaults.buttonColors(
+                containerColor = if (needHelp) Color.Red else Color.Green
+            )
+        ) {
+            Text(text = stringResource(if (needHelp) R.string.change_btn else R.string.need_help_btn))
         }
     }
 }

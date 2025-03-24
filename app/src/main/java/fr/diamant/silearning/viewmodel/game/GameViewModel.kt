@@ -12,10 +12,10 @@ import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.data.entity.RANDOM_ID
 import fr.diamant.silearning.message.MessageType
 import fr.diamant.silearning.navigation.NavigationDestinations
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import java.util.logging.Logger
 
 class GameViewModel(application: Application): AndroidViewModel(application) {
     private val _container = (application as SILearningApplication).container
@@ -27,6 +27,7 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     var size = mutableIntStateOf(0)
 
     var currentQuestion = mutableStateOf<Question?>(null)
+    var currentNeedHelp = mutableStateOf(false)
     var snackbarMessage = mutableStateOf(MessageType.DEFAULT)
     var showAnswer = mutableStateOf(false)
 
@@ -80,11 +81,24 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
+    fun changeStatusQuestion() {
+        val currentQ = currentQuestion.value
+        if (currentQ != null) {
+            currentQ.needHelp = !currentQ.needHelp
+            currentNeedHelp.value = currentQ.needHelp
+            viewModelScope.launch(Dispatchers.IO) {
+                Logger.getLogger("GameViewModel").info("Updating question: $currentQ")
+                _container.Repository.updateQuestion(currentQ)
+            }
+        }
+    }
+
     fun printAnswer() {
         showAnswer.value = true
     }
 
     private fun setQuestion(question: Question) {
         currentQuestion.value = question
+        currentNeedHelp.value = question.needHelp
     }
 }

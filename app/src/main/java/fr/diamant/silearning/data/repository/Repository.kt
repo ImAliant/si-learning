@@ -13,6 +13,7 @@ interface Repository {
     fun getAllQuestions(): Flow<List<Question>>
     fun getQuestionById(id: Int): Flow<Question>
 
+    suspend fun updateQuestion(question: Question)
     suspend fun insertQuestion(question: Question): Long
     suspend fun insertCategory(category: Category): Long
 }

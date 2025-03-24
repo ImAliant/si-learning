@@ -11,4 +11,6 @@
     <string name="wrong_answer">Mauvaise réponse</string>
     <string name="random_cat">Random</string>
     <string name="print_btn">Vérifier</string>
+    <string name="change_btn">Default</string>
+    <string name="need_help_btn">Besoin revision</string>
 </resources>

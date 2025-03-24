@@ -39,4 +39,7 @@ interface SIDao {
 
     @Query("SELECT * FROM questions")
     fun getAllQuestions(): Flow<List<Question>>
+
+    @Query("UPDATE questions SET question = :question, answer = :answer, image = :image, categoryId = :categoryId, needHelp = :needHelp WHERE id = :id")
+    fun updateQuestion(id: Int, question: String, answer: String, image: Int, categoryId: Int, needHelp: Boolean)
 }

@@ -24,9 +24,10 @@ data class Question(
     val question: String,
     val answer: String,
     val image: Int,
-    val categoryId: Int
+    val categoryId: Int,
+    var needHelp: Boolean = false
 ) {
     override fun toString(): String {
-        return "Question(id=$id, question='$question', answer='$answer', image='$image', categoryId=$categoryId)"
+        return "Question(id=$id, question='$question', answer='$answer', image='$image', categoryId=$categoryId, needHelp=$needHelp)"
     }
 }
