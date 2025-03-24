@@ -52,6 +52,7 @@ abstract class SIDatabase: RoomDatabase() {
                 Logger.getLogger("SIDatabase").info("Populating database with ${data.size} categories")
 
                 dao?.insertCategory(Category(name = context.getString(R.string.random_cat)))
+                dao?.insertCategory(Category(name = context.getString(R.string.help_cat)))
 
                 data.forEach { categoryWithQuestions ->
                     val categoryId = dao?.getCategoryIdByName(categoryWithQuestions.categoryName)

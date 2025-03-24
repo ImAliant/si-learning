@@ -13,6 +13,7 @@ class OfflineRepository(private val dao: SIDao): Repository {
     override suspend fun insertCategory(category: Category) = dao.insertCategory(category)
     override fun getAllQuestions() = dao.getAllQuestions()
     override fun getQuestionById(id: Int) = dao.getQuestionById(id)
+    override fun getQuestionWhoNeedHelp() = dao.getQuestionWhoNeedHelp()
     override suspend fun insertQuestion(question: Question) = dao.insertQuestion(question)
     override suspend fun updateQuestion(question: Question) = dao.updateQuestion(question.id, question.question, question.answer, question.image, question.categoryId, question.needHelp)
 }

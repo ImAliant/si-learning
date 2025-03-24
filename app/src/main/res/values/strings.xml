@@ -9,7 +9,8 @@
     <string name="no_question_found">Aucune question trouvée</string>
     <string name="correct_answer">Bonne réponse</string>
     <string name="wrong_answer">Mauvaise réponse</string>
-    <string name="random_cat">Random</string>
+    <string name="random_cat">Aléatoire</string>
+    <string name="help_cat">Révision</string>
     <string name="print_btn">Vérifier</string>
     <string name="change_btn">Default</string>
     <string name="need_help_btn">Besoin revision</string>

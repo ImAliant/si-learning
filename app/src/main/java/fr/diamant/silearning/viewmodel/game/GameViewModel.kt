@@ -8,6 +8,7 @@ import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.navigation.NavController
 import fr.diamant.silearning.SILearningApplication
+import fr.diamant.silearning.data.entity.HELP_ID
 import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.data.entity.RANDOM_ID
 import fr.diamant.silearning.message.MessageType
@@ -45,10 +46,16 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
     }
 
     private suspend fun fetchQuestions(categoryId: Int) {
-        val fetchedQuestions: List<Question> = if (categoryId == RANDOM_ID) {
-            _container.Repository.getAllQuestions().first().shuffled().take(50)
-        } else {
-            _container.Repository.getQuestionsByCategoryId(categoryId).first()
+        val fetchedQuestions: List<Question> = when (categoryId) {
+            RANDOM_ID -> {
+                _container.Repository.getAllQuestions().first().shuffled().take(50)
+            }
+            HELP_ID -> {
+                _container.Repository.getQuestionWhoNeedHelp().first().shuffled()
+            }
+            else -> {
+                _container.Repository.getQuestionsByCategoryId(categoryId).first()
+            }
         }
 
         questions.clear()

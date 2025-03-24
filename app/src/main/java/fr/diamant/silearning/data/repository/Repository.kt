@@ -12,6 +12,7 @@ interface Repository {
     fun getQuestionsByCategoryName(categoryName: String): Flow<List<Question>>
     fun getAllQuestions(): Flow<List<Question>>
     fun getQuestionById(id: Int): Flow<Question>
+    fun getQuestionWhoNeedHelp(): Flow<List<Question>>
 
     suspend fun updateQuestion(question: Question)
     suspend fun insertQuestion(question: Question): Long
