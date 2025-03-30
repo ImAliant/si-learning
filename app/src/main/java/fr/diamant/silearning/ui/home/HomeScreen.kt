@@ -4,14 +4,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.itemsIndexed
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
@@ -25,12 +29,15 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Category
+import fr.diamant.silearning.data.entity.RANDOM_ID
 import fr.diamant.silearning.message.SnackbarHandler
 import fr.diamant.silearning.viewmodel.home.HomeViewModel
+import java.util.logging.Logger
 
 private const val GRID_COLUMNS = 2
 
@@ -58,12 +65,44 @@ fun HomeUI(navController: NavController, model: HomeViewModel) {
 private fun ShowCategories(navController: NavController, model: HomeViewModel) {
     val categories = model.categories
 
-    LazyVerticalGrid(
-        columns = GridCells.Fixed(GRID_COLUMNS),
-        modifier = Modifier.fillMaxWidth()
+    LazyColumn(modifier = Modifier.fillMaxSize()) {
+        if (categories.isNotEmpty()) {
+            // First category takes full width
+            item {
+                FullWidthCategory(categories[RANDOM_ID-1], navController, model)
+            }
+
+            // Remaining categories in a grid format
+            items(categories.drop(1).chunked(GRID_COLUMNS)) { rowCategories ->
+                CategoryRow(rowCategories, navController, model)
+            }
+        }
+    }
+}
+
+@Composable
+private fun FullWidthCategory(category: Category, navController: NavController, model: HomeViewModel) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(100.dp), // Adjust height as needed
+        contentAlignment = Alignment.Center
     ) {
-        itemsIndexed(categories) { index, category ->
-            ListCategory(index, category, navController, model)
+        ListCategory(RANDOM_ID-1, category, navController, model)
+    }
+}
+
+@Composable
+private fun CategoryRow(categories: List<Category>, navController: NavController, model: HomeViewModel) {
+    Row(modifier = Modifier.fillMaxWidth()) {
+        categories.forEach { category ->
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .aspectRatio(1.65f)
+            ) {
+                ListCategory(category.id, category, navController, model)
+            }
         }
     }
 }
