@@ -96,9 +96,11 @@ private fun GameUI(
 
         ActionButtons(
             model = model,
+            onPreviousClick = { model.moveToPreviousQuestion(navController) },
             onPrintClick = { model.printAnswer() },
             onNextClick = { model.moveToNextQuestion(navController) },
             onChangeClick = { model.changeStatusQuestion() },
+            previousText = context.getString(R.string.previous_btn),
             checkText = context.getString(R.string.print_btn),
             nextText = context.getString(R.string.next_btn)
         )
@@ -168,9 +170,11 @@ private fun ImageViewer(currentImage: Int?) {
 @Composable
 private fun ActionButtons(
     model: GameViewModel,
+    onPreviousClick: () -> Unit,
     onPrintClick: () -> Unit,
     onNextClick: () -> Unit,
     onChangeClick: () -> Unit,
+    previousText: String,
     checkText: String,
     nextText: String
 ) {
@@ -180,6 +184,12 @@ private fun ActionButtons(
         horizontalArrangement = Arrangement.SpaceEvenly,
         modifier = Modifier.fillMaxWidth().padding(8.dp)
     ) {
+        Button(
+            onClick = onPreviousClick
+        ) {
+            Text(text = previousText)
+        }
+
         Button(
             onClick = onPrintClick
         ) {

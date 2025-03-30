@@ -76,16 +76,34 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
         }
     }
 
-    fun moveToNextQuestion(navController: NavController) {
-        currentQuestionIndex.intValue++
-        if (currentQuestionIndex.intValue < questions.size) {
-            setQuestion(questions[currentQuestionIndex.intValue])
-            currentQI.intValue++
-            showAnswer.value = false
+    // Use to change the current question
+    // Called when the user clicks on the previous or next button
+    // It will decrement or increment the currentQuestionIndex
+    private fun updateCurrentQuestionIndex(index: Int, navController: NavController) {
+        currentQuestionIndex.intValue += index
+        if (currentQuestionIndex.intValue < 0) {
+            currentQuestionIndex.intValue = 0
+            currentQI.intValue = 1
+        } else if (currentQuestionIndex.intValue >= questions.size) {
+            goToHome(navController)
         } else {
-            val destination = NavigationDestinations.Home.route
-            navController.navigate(destination)
+            setQuestion(questions[currentQuestionIndex.intValue])
+            currentQI.intValue = currentQuestionIndex.intValue + 1
+            showAnswer.value = false
         }
+    }
+
+    private fun goToHome(navController: NavController) {
+        val destination = NavigationDestinations.Home.route
+        navController.navigate(destination)
+    }
+
+    fun moveToNextQuestion(navController: NavController) {
+        updateCurrentQuestionIndex(1, navController)
+    }
+
+    fun moveToPreviousQuestion(navController: NavController) {
+        updateCurrentQuestionIndex(-1, navController)
     }
 
     fun changeStatusQuestion() {
