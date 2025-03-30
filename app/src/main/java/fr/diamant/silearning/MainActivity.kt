@@ -52,7 +52,7 @@ fun MainScreen() {
         bottomBar = { BottomBar(navController) },
         snackbarHost = { SnackbarHost(snackbarHostState) }
     ) { innerPadding ->
-        NavigationGraph(navController, innerPadding, snackbarHostState, Modifier.padding(innerPadding))
+        NavigationGraph(navController, snackbarHostState, Modifier.padding(innerPadding))
     }
 }
 

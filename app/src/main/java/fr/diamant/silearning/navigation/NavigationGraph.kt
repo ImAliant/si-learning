@@ -15,7 +15,7 @@ import fr.diamant.silearning.ui.game.GameScreen
 import fr.diamant.silearning.ui.home.HomeScreen
 
 @Composable
-fun NavigationGraph(navController: NavHostController, padding: PaddingValues, snackbarHostState: SnackbarHostState, modifier: Modifier = Modifier) {
+fun NavigationGraph(navController: NavHostController, snackbarHostState: SnackbarHostState, modifier: Modifier = Modifier) {
     NavHost(
         navController = navController,
         startDestination = NavigationDestinations.Home.route,
@@ -29,7 +29,7 @@ fun NavigationGraph(navController: NavHostController, padding: PaddingValues, sn
             route = NavigationDestinations.Game.route + "/{categoryId}",
             arguments = listOf(navArgument("categoryId") { type = NavType.IntType })
         ) {
-            GameScreen(navController, padding, snackbarHostState, it.arguments!!.getInt("categoryId"))
+            GameScreen(navController, snackbarHostState, it.arguments!!.getInt("categoryId"))
         }
     }
 }

@@ -3,8 +3,8 @@ package fr.diamant.silearning.ui.game
 import android.content.Context
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -34,12 +33,12 @@ import androidx.navigation.NavController
 import fr.diamant.silearning.R
 import fr.diamant.silearning.data.entity.Question
 import fr.diamant.silearning.message.SnackbarHandler
+import fr.diamant.silearning.ui.button.GameButton
 import fr.diamant.silearning.viewmodel.game.GameViewModel
 
 @Composable
 fun GameScreen(
     navController: NavController,
-    paddingValues: PaddingValues,
     snackbarHostState: SnackbarHostState,
     categoryId: Int,
     model: GameViewModel = viewModel()
@@ -53,7 +52,6 @@ fun GameScreen(
 
     GameUI(
         navController = navController,
-        paddingValues = paddingValues,
         currentQ = currentQ,
         context = context,
         model = model
@@ -70,43 +68,73 @@ private fun InitializeGame(model: GameViewModel, categoryId: Int) {
 @Composable
 private fun GameUI(
     navController: NavController,
-    paddingValues: PaddingValues,
     currentQ: Question?,
     context: Context,
     model: GameViewModel
 ) {
     Column(
-        modifier = Modifier.fillMaxSize().padding(paddingValues),
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.SpaceBetween
+        modifier = Modifier
+            .fillMaxSize(),
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Information(model)
+        Column(
+            modifier = Modifier
+                .weight(1f)
+                .fillMaxWidth(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.spacedBy(16.dp)
+        ) {
+            Information(model)
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            QuestionText(question = currentQ?.question, context = context)
+
+            ImageViewer(currentImage = currentQ?.image)
+        }
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp), // Adds spacing from the bottom of the screen
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            AnswerViewer(
+                model = model,
+                context = context,
+                currentAnswer = currentQ?.answer
+            )
+        }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        QuestionText(question = currentQ?.question, context = context)
-
-        ImageViewer(currentImage = currentQ?.image)
-
-        AnswerViewer(
-            model = model,
-            context = context,
-            currentAnswer = currentQ?.answer
-        )
-
-        ActionButtons(
-            model = model,
-            onPreviousClick = { model.moveToPreviousQuestion(navController) },
-            onPrintClick = { model.printAnswer() },
-            onNextClick = { model.moveToNextQuestion(navController) },
-            onChangeClick = { model.changeStatusQuestion() },
-            previousText = context.getString(R.string.previous_btn),
-            checkText = context.getString(R.string.print_btn),
-            nextText = context.getString(R.string.next_btn)
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 16.dp), // Adds spacing from the bottom of the screen
+            contentAlignment = Alignment.BottomCenter
+        ) {
+            ActionButtons(
+                model = model,
+                onPreviousClick = { model.moveToPreviousQuestion(navController) },
+                onPrintClick = { model.printAnswer() },
+                onNextClick = { model.moveToNextQuestion(navController) },
+                onChangeClick = { model.changeStatusQuestion() },
+                previousText = context.getString(R.string.previous_btn),
+                checkText = context.getString(R.string.print_btn),
+                nextText = context.getString(R.string.next_btn)
+            )
+        }
     }
+}
+
+@Composable
+private fun GameActions(
+    navController: NavController,
+    context: Context,
+    model: GameViewModel
+) {
+
 }
 
 @Composable
@@ -180,40 +208,28 @@ private fun ActionButtons(
 ) {
     val needHelp by remember { model.currentNeedHelp }
 
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth().padding(8.dp)
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp), // Adjust the spacing between rows
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxWidth()
     ) {
-        Button(
-            onClick = onPreviousClick
+        Row(
+            horizontalArrangement = Arrangement.SpaceEvenly,
+            modifier = Modifier.fillMaxWidth()
         ) {
-            Text(text = previousText)
+            GameButton(previousText, onClick = onPreviousClick, modifier = Modifier.padding(8.dp))
+            GameButton(nextText, onClick = onNextClick, modifier = Modifier.padding(8.dp))
         }
 
-        Button(
-            onClick = onPrintClick
-        ) {
-            Text(text = checkText)
-        }
+        GameButton(checkText, onClick = onPrintClick, Modifier.padding(top = 8.dp))
 
-        Button(
-            onClick = onNextClick
-        ) {
-            Text(text = nextText)
-        }
-    }
-
-    Row(
-        horizontalArrangement = Arrangement.SpaceEvenly,
-        modifier = Modifier.fillMaxWidth().padding(8.dp)
-    ) {
-        Button(
+        GameButton(
+            text = stringResource(if (needHelp) R.string.change_btn else R.string.need_help_btn),
             onClick = onChangeClick,
+            modifier = Modifier.padding(8.dp),
             colors = ButtonDefaults.buttonColors(
-                containerColor = if (needHelp) Color.Red else Color.Green
+                containerColor = if (needHelp) Color(0xFFBD3DEC) else Color(0xFFF9A6FF),
             )
-        ) {
-            Text(text = stringResource(if (needHelp) R.string.change_btn else R.string.need_help_btn))
-        }
+        )
     }
 }
