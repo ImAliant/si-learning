@@ -77,64 +77,83 @@ private fun GameUI(
             .fillMaxSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Column(
-            modifier = Modifier
-                .weight(1f)
-                .fillMaxWidth(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            Information(model)
+        GameContent(
+            currentQ = currentQ,
+            modifier = Modifier.weight(1f),
+            context = context,
+            model = model
+        )
 
-            Spacer(modifier = Modifier.height(16.dp))
+        GameActions(
+            navController = navController,
+            currentQ = currentQ,
+            context = context,
+            model = model
+        )
+    }
+}
 
-            QuestionText(question = currentQ?.question, context = context)
-
-            ImageViewer(currentImage = currentQ?.image)
-        }
-
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp), // Adds spacing from the bottom of the screen
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            AnswerViewer(
-                model = model,
-                context = context,
-                currentAnswer = currentQ?.answer
-            )
-        }
+@Composable
+private fun GameContent(
+    currentQ: Question?,
+    modifier: Modifier = Modifier,
+    context: Context,
+    model: GameViewModel
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.spacedBy(16.dp)
+    ) {
+        Information(model)
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(bottom = 16.dp), // Adds spacing from the bottom of the screen
-            contentAlignment = Alignment.BottomCenter
-        ) {
-            ActionButtons(
-                model = model,
-                onPreviousClick = { model.moveToPreviousQuestion(navController) },
-                onPrintClick = { model.printAnswer() },
-                onNextClick = { model.moveToNextQuestion(navController) },
-                onChangeClick = { model.changeStatusQuestion() },
-                previousText = context.getString(R.string.previous_btn),
-                checkText = context.getString(R.string.print_btn),
-                nextText = context.getString(R.string.next_btn)
-            )
-        }
+        QuestionText(question = currentQ?.question, context = context)
+
+        ImageViewer(currentImage = currentQ?.image)
     }
 }
 
 @Composable
 private fun GameActions(
     navController: NavController,
+    currentQ: Question?,
     context: Context,
-    model: GameViewModel
+    model: GameViewModel,
 ) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp), // Adds spacing from the bottom of the screen
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        AnswerViewer(
+            model = model,
+            context = context,
+            currentAnswer = currentQ?.answer
+        )
+    }
 
+    Spacer(modifier = Modifier.height(16.dp))
+
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp), // Adds spacing from the bottom of the screen
+        contentAlignment = Alignment.BottomCenter
+    ) {
+        ActionButtons(
+            model = model,
+            onPreviousClick = { model.moveToPreviousQuestion(navController) },
+            onPrintClick = { model.printAnswer() },
+            onNextClick = { model.moveToNextQuestion(navController) },
+            onChangeClick = { model.changeStatusQuestion() },
+            previousText = context.getString(R.string.previous_btn),
+            checkText = context.getString(R.string.print_btn),
+            nextText = context.getString(R.string.next_btn)
+        )
+    }
 }
 
 @Composable
