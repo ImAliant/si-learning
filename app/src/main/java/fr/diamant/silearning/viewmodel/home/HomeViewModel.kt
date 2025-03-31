@@ -24,11 +24,6 @@ class HomeViewModel(application: Application): AndroidViewModel(application) {
             _container.Repository.getAllCategories().collect {
                 categories.clear()
                 categories.addAll(it)
-
-                Logger.getLogger("HomeViewModel").info("Categories loaded: ${categories.size}")
-                categories.forEach { category ->
-                    Logger.getLogger("HomeViewModel").info("Category: ${category.name} - ${category.id}")
-                }
             }
         }
     }

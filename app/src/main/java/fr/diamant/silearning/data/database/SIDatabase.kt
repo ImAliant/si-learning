@@ -22,17 +22,21 @@ abstract class SIDatabase: RoomDatabase() {
     abstract fun SIDao(): SIDao
 
     companion object {
-        @Volatile
         private var INSTANCE: SIDatabase? = null
 
         fun getDatabase(context: Context): SIDatabase {
-            return INSTANCE ?: synchronized(this) {
-                Room.databaseBuilder(
-                    context.applicationContext,
-                    SIDatabase::class.java,
-                    "question_database"
-                ).addCallback(DatabaseCallback(context))
-                    .build().also { INSTANCE = it }
+            synchronized(this) {
+                var instance = INSTANCE
+                if (instance == null) {
+                    instance = Room.databaseBuilder(
+                        context.applicationContext,
+                        SIDatabase::class.java,
+                        "question_database"
+                    ).addCallback(DatabaseCallback(context))
+                        .build()
+                    INSTANCE = instance
+                }
+                return instance
             }
         }
     }
@@ -40,45 +44,46 @@ abstract class SIDatabase: RoomDatabase() {
     private class DatabaseCallback(private val context: Context): Callback() {
         override fun onCreate(db: SupportSQLiteDatabase) {
             super.onCreate(db)
-            populateDatabase(context)
+
+            CoroutineScope(Dispatchers.IO).launch {
+                prepopulateDatabase(context)
+            }
         }
 
-        fun populateDatabase(context: Context) {
-            CoroutineScope(Dispatchers.IO).launch {
-                val dao = INSTANCE?.SIDao()
-                val jsonString = readJSONFromAsset(context, "questions.json")
-                val type = object : TypeToken<List<CategoryWithQuestionsJSON>>() {}.type
-                val data: List<CategoryWithQuestionsJSON> = Gson().fromJson(jsonString, type)
-                Logger.getLogger("SIDatabase").info("Populating database with ${data.size} categories")
+        private suspend fun prepopulateDatabase(context: Context) {
+            val dao = INSTANCE?.SIDao()
+            val jsonString = readJSONFromAsset(context, "questions.json")
+            val type = object : TypeToken<List<CategoryWithQuestionsJSON>>() {}.type
+            val data: List<CategoryWithQuestionsJSON> = Gson().fromJson(jsonString, type)
+            Logger.getLogger("SIDatabase").info("Populating database with ${data.size} categories")
 
-                dao?.insertCategory(Category(name = context.getString(R.string.random_cat)))
-                dao?.insertCategory(Category(name = context.getString(R.string.help_cat)))
+            dao?.insertCategory(Category(name = context.getString(R.string.random_cat)))
+            dao?.insertCategory(Category(name = context.getString(R.string.help_cat)))
 
-                data.forEach { categoryWithQuestions ->
-                    val categoryId = dao?.getCategoryIdByName(categoryWithQuestions.categoryName)
-                        ?: dao?.insertCategory(
-                            Category(
-                                name = categoryWithQuestions.categoryName
+            data.forEach { categoryWithQuestions ->
+                val categoryId = dao?.getCategoryIdByName(categoryWithQuestions.categoryName)
+                    ?: dao?.insertCategory(
+                        Category(
+                            name = categoryWithQuestions.categoryName
+                        )
+                    )
+
+                categoryWithQuestions.questions.forEach { questionJSON ->
+                    if (categoryId != null) {
+                        val imageResId = questionJSON.image?.takeIf { it.isNotEmpty() }?.let {
+                            context.resources.getIdentifier(it, "drawable", context.packageName)
+                        } ?: 0
+
+                        Logger.getLogger("SIDatabase").info("Inserting question: ${questionJSON.question} with imageResId: $imageResId")
+
+                        dao?.insertQuestion(
+                            Question(
+                                question = questionJSON.question,
+                                answer = questionJSON.answer,
+                                image = imageResId,
+                                categoryId = categoryId.toInt()
                             )
                         )
-
-                    categoryWithQuestions.questions.forEach { questionJSON ->
-                        if (categoryId != null) {
-                            val imageResId = if (!questionJSON.image.isNullOrEmpty()) {
-                                context.resources.getIdentifier(questionJSON.image, "drawable", context.packageName)
-                            } else {
-                                0 // Default to 0 if image is null or empty
-                            }
-
-                            dao?.insertQuestion(
-                                Question(
-                                    question = questionJSON.question,
-                                    answer = questionJSON.answer,
-                                    image = imageResId,
-                                    categoryId = categoryId.toInt()
-                                )
-                            )
-                        }
                     }
                 }
             }
