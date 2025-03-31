@@ -11,30 +11,42 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 
+private val WIDTH = 150.dp
+private val SHAPE_SIZE = 8.dp
+private val ELEVATION = 4.dp
+private val PRESSED_ELEVATION = 8.dp
+private val HOVERED_ELEVATION = 6.dp
+private val FOCUSED_ELEVATION = 6.dp
+
+private val CONTAINER_COLOR = Color(0xFF6200EE)
+private val CONTENT_COLOR = Color.White
+private val DISABLED_CONTAINER_COLOR = Color(0xFFBB86FC)
+private val DISABLED_CONTENT_COLOR = Color.White
+
 @Composable
 fun GameButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     colors: ButtonColors = ButtonDefaults.buttonColors(
-        containerColor = Color(0xFF6200EE),
-        contentColor = Color.White,
-        disabledContainerColor = Color(0xFFBB86FC),
-        disabledContentColor = Color.White
+        containerColor = CONTAINER_COLOR,
+        contentColor = CONTENT_COLOR,
+        disabledContainerColor = DISABLED_CONTAINER_COLOR,
+        disabledContentColor = DISABLED_CONTENT_COLOR
     ),
     enabled: Boolean = true
 ) {
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = modifier.width(150.dp),
+        modifier = modifier.width(WIDTH),
         colors = colors,
-        shape = RoundedCornerShape(8.dp),
+        shape = RoundedCornerShape(SHAPE_SIZE),
         elevation = ButtonDefaults.buttonElevation(
-            defaultElevation = 4.dp,
-            pressedElevation = 8.dp,
-            hoveredElevation = 6.dp,
-            focusedElevation = 6.dp
+            defaultElevation = ELEVATION,
+            pressedElevation = PRESSED_ELEVATION,
+            hoveredElevation = HOVERED_ELEVATION,
+            focusedElevation = FOCUSED_ELEVATION
         )
     ) {
         Text(text = text)

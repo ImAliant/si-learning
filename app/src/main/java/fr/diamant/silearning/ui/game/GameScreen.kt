@@ -228,7 +228,7 @@ private fun ActionButtons(
     val needHelp by remember { model.currentNeedHelp }
 
     Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp), // Adjust the spacing between rows
+        verticalArrangement = Arrangement.spacedBy(8.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxWidth()
     ) {
