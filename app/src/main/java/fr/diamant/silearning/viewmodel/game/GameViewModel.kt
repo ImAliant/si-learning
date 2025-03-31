@@ -112,7 +112,6 @@ class GameViewModel(application: Application): AndroidViewModel(application) {
             currentQ.needHelp = !currentQ.needHelp
             currentNeedHelp.value = currentQ.needHelp
             viewModelScope.launch(Dispatchers.IO) {
-                Logger.getLogger("GameViewModel").info("Updating question: $currentQ")
                 _container.Repository.updateQuestion(currentQ)
             }
         }

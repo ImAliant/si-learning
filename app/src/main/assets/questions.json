@@ -376,11 +376,5 @@
       { "question": "Citer une application des « filters » servlet ?", "answer": "Authentification", "image": null },
       { "question": "Un « filter » est-il un servlet ?", "answer": "Oui", "image": null }
     ]
-  },
-  {
-    "categoryName": "Test",
-    "questions": [
-      { "question": "Test ?", "answer": "Test", "image": null }
-    ]
   }
 ]
